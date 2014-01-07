@@ -19,6 +19,7 @@ package com.github.nmorel.gwtjackson.client.stream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import com.github.nmorel.gwtjackson.client.stream.gson.JsonWriter;
 
 import com.github.nmorel.gwtjackson.client.GwtJacksonTestCase;
 import com.google.gwt.core.client.GWT;

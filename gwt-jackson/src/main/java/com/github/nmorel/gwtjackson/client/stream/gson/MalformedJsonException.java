@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.nmorel.gwtjackson.client.stream;
+package com.github.nmorel.gwtjackson.client.stream.gson;
 
 import java.io.IOException;
 
+import com.github.nmorel.gwtjackson.client.stream.*;
+
 /**
  * Thrown when a reader encounters malformed JSON. Some syntax errors can be
- * ignored by calling {@link JsonReader#setLenient(boolean)}.
+ * ignored by calling {@link com.github.nmorel.gwtjackson.client.stream.JsonReader#setLenient(boolean)}.
  */
 public final class MalformedJsonException extends IOException
 {

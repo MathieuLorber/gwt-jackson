@@ -327,8 +327,7 @@ public class JsonSerializationContext extends JsonMappingContext {
     }
 
     public JsonWriter newJsonWriter() {
-        JsonWriter writer = new JsonWriter( new StringBuilder() );
-        writer.setLenient( true );
+        JsonWriter writer = new com.github.nmorel.gwtjackson.client.stream.gson.JsonWriter( new StringBuilder(), true );
         writer.setSerializeNulls( serializeNulls );
         if ( indent ) {
             writer.setIndent( "  " );

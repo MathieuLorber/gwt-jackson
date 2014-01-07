@@ -142,8 +142,7 @@ public class JsonDeserializationContext extends JsonMappingContext {
     }
 
     public JsonReader newJsonReader( String input ) {
-        JsonReader reader = new JsonReader( new StringReader( input ) );
-        reader.setLenient( true );
+        JsonReader reader = new com.github.nmorel.gwtjackson.client.stream.gson.JsonReader( new StringReader( input ), true );
         return reader;
     }
 

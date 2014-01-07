@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.nmorel.gwtjackson.client.stream;
+package com.github.nmorel.gwtjackson.client.stream.gson;
 
 /**
  * Lexical scoping elements within a JSON reader or writer.
