@@ -40,7 +40,7 @@ public class JSONReader implements JsonReader {
             }
             currentReader = new JSONArrayReader( array );
         } else {
-            JSONValue value = currentReader.getValue();
+            JSONValue value = currentReader.nextValue();
             JSONArray array = value.isArray();
             if ( null == array ) {
                 throw new IOException( "current element isn't an array : " + value );
@@ -71,7 +71,7 @@ public class JSONReader implements JsonReader {
             }
             currentReader = new JSONObjectReader( object );
         } else {
-            JSONValue value = currentReader.getValue();
+            JSONValue value = currentReader.nextValue();
             JSONObject object = value.isObject();
             if ( null == object ) {
                 throw new IOException( "current element isn't an object : " + value );
@@ -120,7 +120,11 @@ public class JSONReader implements JsonReader {
                 return JsonToken.STRING;
             }
         } else {
-            return currentReader.peek();
+            JsonToken token = currentReader.peek();
+            if ( stack.isEmpty() && (JsonToken.END_ARRAY == token || JsonToken.END_OBJECT == token) ) {
+                return JsonToken.END_DOCUMENT;
+            }
+            return token;
         }
         return JsonToken.END_DOCUMENT;
     }

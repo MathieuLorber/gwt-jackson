@@ -10,6 +10,6 @@ public class JsonReaderTest extends AbstractJsonReaderTest {
 
     @Override
     public JsonReader newJsonReader( String input ) {
-        return new com.github.nmorel.gwtjackson.client.stream.gson.JsonReader( new StringReader( input ) );
+        return new JsonReaderNonBuffered( input );
     }
 }
