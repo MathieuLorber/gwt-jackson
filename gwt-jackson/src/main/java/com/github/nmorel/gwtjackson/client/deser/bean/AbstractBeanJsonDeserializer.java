@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,6 +29,7 @@ import com.github.nmorel.gwtjackson.client.JsonDeserializer;
 import com.github.nmorel.gwtjackson.client.JsonDeserializerParameters;
 import com.github.nmorel.gwtjackson.client.stream.JsonReader;
 import com.github.nmorel.gwtjackson.client.stream.JsonToken;
+import com.github.nmorel.gwtjackson.client.utils.FastMap;
 
 /**
  * Base implementation of {@link JsonDeserializer} for beans.
@@ -38,10 +38,9 @@ import com.github.nmorel.gwtjackson.client.stream.JsonToken;
  */
 public abstract class AbstractBeanJsonDeserializer<T> extends JsonDeserializer<T> {
 
-    private final Map<String, BeanPropertyDeserializer<T, ?>> deserializers = new LinkedHashMap<String, BeanPropertyDeserializer<T, ?>>();
+    private final FastMap<BeanPropertyDeserializer<T, ?>> deserializers = FastMap.createObject().cast();
 
-    private final Map<String, BackReferenceProperty<T, ?>> backReferenceDeserializers = new LinkedHashMap<String,
-            BackReferenceProperty<T, ?>>();
+    private final FastMap<BackReferenceProperty<T, ?>> backReferenceDeserializers = FastMap.createObject().cast();
 
     private final Map<Class<? extends T>, SubtypeDeserializer<? extends T>> subtypeClassToDeserializer = new IdentityHashMap<Class<?
             extends T>, SubtypeDeserializer<? extends T>>();
