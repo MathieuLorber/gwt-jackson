@@ -18,6 +18,7 @@ package com.github.nmorel.gwtjackson.rebind;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 import com.github.nmorel.gwtjackson.rebind.property.PropertyAccessors;
 import com.google.gwt.core.ext.TreeLogger;
@@ -29,6 +30,7 @@ import com.google.gwt.core.ext.typeinfo.JMethod;
 import com.google.gwt.core.ext.typeinfo.JPrimitiveType;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.thirdparty.guava.common.base.Function;
+import com.google.gwt.thirdparty.guava.common.base.Optional;
 
 /**
  * @author Nicolas Morel
@@ -54,14 +56,19 @@ public final class CreatorUtils {
      *
      * @return the annotation if found, null otherwise
      */
-    public static <T extends Annotation> T findFirstEncounteredAnnotationsOnAllHierarchy( JClassType type, Class<T> annotation ) {
+    public static <T extends Annotation> T findFirstEncounteredAnnotationsOnAllHierarchy( RebindConfiguration configuration,
+                                                                                          JClassType type, Class<T> annotation ) {
         JClassType currentType = type;
-        while ( null != currentType && !currentType.getQualifiedSourceName().equals( "java.lang.Object" ) ) {
+        while ( null != currentType ) {
+            Optional<JClassType> mixin = configuration.getMixInAnnotations( currentType );
+            if ( mixin.isPresent() && mixin.get().isAnnotationPresent( annotation ) ) {
+                return mixin.get().getAnnotation( annotation );
+            }
             if ( currentType.isAnnotationPresent( annotation ) ) {
                 return currentType.getAnnotation( annotation );
             }
             for ( JClassType interf : currentType.getImplementedInterfaces() ) {
-                T annot = findFirstEncounteredAnnotationsOnAllHierarchy( interf, annotation );
+                T annot = findFirstEncounteredAnnotationsOnAllHierarchy( configuration, interf, annotation );
                 if ( null != annot ) {
                     return annot;
                 }
@@ -107,6 +114,45 @@ public final class CreatorUtils {
         }
 
         return null;
+    }
+
+    public static boolean isAnyAnnotationPresentOnField( PropertyAccessors propertyAccessors,
+                                                         List<Class<? extends Annotation>> annotations ) {
+        if ( propertyAccessors.getField().isPresent() ) {
+            for ( Class<? extends Annotation> annotation : annotations ) {
+                if ( propertyAccessors.getField().get().isAnnotationPresent( annotation ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAnyAnnotationPresentOnGetter( PropertyAccessors propertyAccessors,
+                                                          List<Class<? extends Annotation>> annotations ) {
+        return isAnyAnnotationPresentOnMethod( propertyAccessors.getGetter(), propertyAccessors.getGetters(), annotations );
+    }
+
+    public static boolean isAnyAnnotationPresentOnSetter( PropertyAccessors propertyAccessors,
+                                                          List<Class<? extends Annotation>> annotations ) {
+        return isAnyAnnotationPresentOnMethod( propertyAccessors.getSetter(), propertyAccessors.getSetters(), annotations );
+    }
+
+    private static boolean isAnyAnnotationPresentOnMethod( Optional<JMethod> method, List<JMethod> superMethods,
+                                                           List<Class<? extends Annotation>> annotations ) {
+        if ( method.isPresent() ) {
+            for ( Class<? extends Annotation> annotation : annotations ) {
+                if ( method.get().isAnnotationPresent( annotation ) ) {
+                    return true;
+                }
+                for ( JMethod superMethod : superMethods ) {
+                    if ( superMethod.isAnnotationPresent( annotation ) ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

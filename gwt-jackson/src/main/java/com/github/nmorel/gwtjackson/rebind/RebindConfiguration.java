@@ -140,6 +140,8 @@ public final class RebindConfiguration {
 
     private final Map<String, MapperInstance> keyDeserializers = new HashMap<String, MapperInstance>();
 
+    private final Map<String, JClassType> mixInAnnotations = new HashMap<String, JClassType>();
+
     public RebindConfiguration( TreeLogger logger, GeneratorContext context, JacksonTypeOracle typeOracle ) throws
             UnableToCompleteException {
         this.logger = logger;
@@ -152,6 +154,7 @@ public final class RebindConfiguration {
             for ( MapperType mapperType : MapperType.values() ) {
                 addMappers( configuration, mapperType );
             }
+            addMixInAnnotations( configuration.getMapMixInAnnotations() );
         }
     }
 
@@ -239,7 +242,7 @@ public final class RebindConfiguration {
             try {
                 return context.getTypeOracle().parse( clazz.getCanonicalName() );
             } catch ( TypeOracleException e ) {
-                logger.log( TreeLogger.WARN, "Cannot find the array denoted by the class " + clazz );
+                logger.log( TreeLogger.WARN, "Cannot find the array denoted by the class " + clazz.getCanonicalName() );
                 return null;
             }
 
@@ -256,7 +259,7 @@ public final class RebindConfiguration {
     private JClassType findClassType( Class<?> clazz ) {
         JClassType mapperType = context.getTypeOracle().findType( clazz.getCanonicalName() );
         if ( null == mapperType ) {
-            logger.log( Type.WARN, "Cannot find the type denoted by the class " + clazz );
+            logger.log( Type.WARN, "Cannot find the type denoted by the class " + clazz.getCanonicalName() );
             return null;
         }
         return mapperType;
@@ -379,6 +382,29 @@ public final class RebindConfiguration {
     }
 
     /**
+     * Adds to {@link #mixInAnnotations} the configured mix-in annotations passed in parameters
+     *
+     * @param mapMixInAnnotations mix-ins annotations to add
+     */
+    private void addMixInAnnotations( Map<Class, Class> mapMixInAnnotations ) {
+        if ( !mapMixInAnnotations.isEmpty() ) {
+            for ( Entry<Class, Class> entry : mapMixInAnnotations.entrySet() ) {
+                JClassType targetType = findClassType( entry.getKey() );
+                if ( null == targetType ) {
+                    continue;
+                }
+
+                JClassType mixInType = findClassType( entry.getValue() );
+                if ( null == mixInType ) {
+                    continue;
+                }
+
+                mixInAnnotations.put( targetType.getQualifiedSourceName(), mixInType );
+            }
+        }
+    }
+
+    /**
      * Return a {@link MapperInstance} instantiating the serializer for the given type
      */
     public Optional<MapperInstance> getSerializer( JType type ) {
@@ -404,6 +430,13 @@ public final class RebindConfiguration {
      */
     public Optional<MapperInstance> getKeyDeserializer( JType type ) {
         return Optional.fromNullable( keyDeserializers.get( type.getQualifiedSourceName() ) );
+    }
+
+    /**
+     * Return the mixin type for the given type
+     */
+    public Optional<JClassType> getMixInAnnotations( JType type ) {
+        return Optional.fromNullable( mixInAnnotations.get( type.getQualifiedSourceName() ) );
     }
 
 }

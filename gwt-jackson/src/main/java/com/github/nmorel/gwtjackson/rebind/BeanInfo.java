@@ -47,8 +47,8 @@ import static com.github.nmorel.gwtjackson.rebind.CreatorUtils.findFirstEncounte
  */
 public final class BeanInfo {
 
-    public static BeanInfo process( TreeLogger logger, JacksonTypeOracle typeOracle, BeanJsonMapperInfo mapperInfo ) throws
-            UnableToCompleteException {
+    public static BeanInfo process( TreeLogger logger, JacksonTypeOracle typeOracle, RebindConfiguration configuration,
+                                    BeanJsonMapperInfo mapperInfo ) throws UnableToCompleteException {
         BeanInfo result = new BeanInfo();
         result.type = mapperInfo.getType();
 
@@ -57,7 +57,8 @@ public final class BeanInfo {
 
         determineInstanceCreator( logger, result );
 
-        JsonAutoDetect jsonAutoDetect = findFirstEncounteredAnnotationsOnAllHierarchy( mapperInfo.getType(), JsonAutoDetect.class );
+        JsonAutoDetect jsonAutoDetect = findFirstEncounteredAnnotationsOnAllHierarchy( configuration, mapperInfo
+                .getType(), JsonAutoDetect.class );
         if ( null != jsonAutoDetect ) {
             result.creatorVisibility = jsonAutoDetect.creatorVisibility();
             result.fieldVisibility = jsonAutoDetect.fieldVisibility();
@@ -66,7 +67,7 @@ public final class BeanInfo {
             result.setterVisibility = jsonAutoDetect.setterVisibility();
         }
 
-        JsonIgnoreProperties jsonIgnoreProperties = findFirstEncounteredAnnotationsOnAllHierarchy( mapperInfo
+        JsonIgnoreProperties jsonIgnoreProperties = findFirstEncounteredAnnotationsOnAllHierarchy( configuration, mapperInfo
                 .getType(), JsonIgnoreProperties.class );
         if ( null != jsonIgnoreProperties ) {
             for ( String ignoreProperty : jsonIgnoreProperties.value() ) {
@@ -75,7 +76,7 @@ public final class BeanInfo {
             result.ignoreUnknown = jsonIgnoreProperties.ignoreUnknown();
         }
 
-        JsonPropertyOrder jsonPropertyOrder = findFirstEncounteredAnnotationsOnAllHierarchy( mapperInfo
+        JsonPropertyOrder jsonPropertyOrder = findFirstEncounteredAnnotationsOnAllHierarchy( configuration, mapperInfo
                 .getType(), JsonPropertyOrder.class );
         result.propertyOrderAlphabetic = null != jsonPropertyOrder && jsonPropertyOrder.alphabetic();
         if ( null != jsonPropertyOrder && jsonPropertyOrder.value().length > 0 ) {
@@ -89,8 +90,8 @@ public final class BeanInfo {
             result.propertyOrderList = Collections.emptyList();
         }
 
-        result.identityInfo = Optional.fromNullable( BeanIdentityInfo.process( logger, typeOracle, mapperInfo.getType() ) );
-        result.typeInfo = Optional.fromNullable( BeanTypeInfo.process( logger, typeOracle, mapperInfo.getType() ) );
+        result.identityInfo = Optional.fromNullable( BeanIdentityInfo.process( logger, typeOracle, configuration, mapperInfo.getType() ) );
+        result.typeInfo = Optional.fromNullable( BeanTypeInfo.process( logger, typeOracle, configuration, mapperInfo.getType() ) );
 
         return result;
     }

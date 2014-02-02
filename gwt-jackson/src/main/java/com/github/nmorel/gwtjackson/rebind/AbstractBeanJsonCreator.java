@@ -131,7 +131,7 @@ public abstract class AbstractBeanJsonCreator extends AbstractCreator {
                     qualifiedDeserializerClassName, simpleDeserializerClassName );
 
             // retrieve the informations on the beans and its properties
-            BeanInfo info = BeanInfo.process( logger, typeOracle, mapperInfo );
+            BeanInfo info = BeanInfo.process( logger, typeOracle, configuration, mapperInfo );
             mapperInfo.setBeanInfo( info );
 
             Map<String, PropertyInfo> properties = findAllProperties( info );
@@ -197,7 +197,7 @@ public abstract class AbstractBeanJsonCreator extends AbstractCreator {
         // Processing all the properties accessible via field, getter or setter
         Map<String, PropertyInfo> propertiesMap = new LinkedHashMap<String, PropertyInfo>();
         for ( PropertyAccessors field : fieldsMap.values() ) {
-            PropertyInfo property = PropertyInfo.process( logger, typeOracle, field, mapperInfo );
+            PropertyInfo property = PropertyInfo.process( logger, typeOracle, configuration, field, mapperInfo );
             if ( !property.isVisible() ) {
                 logger.log( TreeLogger.Type.DEBUG, "Field " + field.getPropertyName() + " of type " + info.getType() + " is not visible" );
             } else {

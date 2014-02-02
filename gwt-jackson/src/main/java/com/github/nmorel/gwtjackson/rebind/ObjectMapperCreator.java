@@ -154,7 +154,7 @@ public class ObjectMapperCreator extends AbstractCreator {
                                  boolean writer ) throws UnableToCompleteException {
         source.println();
 
-        JsonRootName jsonRootName = findFirstEncounteredAnnotationsOnAllHierarchy( mappedTypeClass, JsonRootName.class );
+        JsonRootName jsonRootName = findFirstEncounteredAnnotationsOnAllHierarchy( configuration, mappedTypeClass, JsonRootName.class );
         String rootName;
         if ( null == jsonRootName || jsonRootName.value().isEmpty() ) {
             rootName = mappedTypeClass.getSimpleSourceName();

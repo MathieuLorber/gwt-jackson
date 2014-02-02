@@ -89,6 +89,7 @@ import com.github.nmorel.gwtjackson.client.mapper.CommonJsonMapperTest;
 import com.github.nmorel.gwtjackson.client.mapper.IgnoreStaticGwtTest;
 import com.github.nmorel.gwtjackson.client.mapper.SimpleBeanObjectReaderTest;
 import com.github.nmorel.gwtjackson.client.mapper.SimpleBeanObjectWriterTest;
+import com.github.nmorel.gwtjackson.client.mixins.MixinDeserForClassGwtTest;
 import com.github.nmorel.gwtjackson.client.options.CharArrayOptionGwtTest;
 import com.github.nmorel.gwtjackson.client.options.DateOptionsGwtTest;
 import com.github.nmorel.gwtjackson.client.options.IndentGwtTest;
@@ -135,7 +136,6 @@ import com.github.nmorel.gwtjackson.client.ser.number.FloatJsonSerializerTest;
 import com.github.nmorel.gwtjackson.client.ser.number.IntegerJsonSerializerTest;
 import com.github.nmorel.gwtjackson.client.ser.number.LongJsonSerializerTest;
 import com.github.nmorel.gwtjackson.client.ser.number.ShortJsonSerializerTest;
-import com.github.nmorel.gwtjackson.client.stream.AbstractJsonWriterTest;
 import com.github.nmorel.gwtjackson.client.stream.impl.DefaultJsonReaderTest;
 import com.github.nmorel.gwtjackson.client.stream.impl.DefaultJsonWriterTest;
 import com.github.nmorel.gwtjackson.client.stream.impl.FastJsonWriterTest;
@@ -296,6 +296,9 @@ public class GwtJacksonTestSuite extends TestCase {
         suite.addTestSuite( WriteNullMapValuesOptionGwtTest.class );
         suite.addTestSuite( WriteEmptyJsonArraysOptionGwtTest.class );
         suite.addTestSuite( SingleArrayOptionGwtTest.class );
+
+        // Mix-in
+        suite.addTestSuite( MixinDeserForClassGwtTest.class );
 
         return suite;
     }

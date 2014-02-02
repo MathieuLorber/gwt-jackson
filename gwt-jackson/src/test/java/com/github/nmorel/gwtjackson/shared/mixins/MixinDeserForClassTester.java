@@ -16,12 +16,9 @@
 
 package com.github.nmorel.gwtjackson.shared.mixins;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nmorel.gwtjackson.shared.AbstractTester;
 import com.github.nmorel.gwtjackson.shared.ObjectReaderTester;
 
@@ -31,6 +28,18 @@ public final class MixinDeserForClassTester extends AbstractTester {
     /* Helper bean classes
     /**********************************************************
      */
+
+    public static class BaseClassToMixIn {
+
+        /* property that is always found; but has lower priority than
+         * setter method if both found
+         */
+        @JsonProperty
+        public String a;
+
+        // setter that may or may not be auto-detected
+        public void setA( String v ) { a = "XXX" + v; }
+    }
 
     public static class BaseClass {
 
@@ -45,7 +54,10 @@ public final class MixinDeserForClassTester extends AbstractTester {
     }
 
     @JsonAutoDetect( setterVisibility = Visibility.ANY, fieldVisibility = Visibility.ANY )
-    public static class LeafClass extends BaseClass {}
+    public static class LeafClassToMixIn extends BaseClassToMixIn {}
+
+    @JsonAutoDetect( setterVisibility = Visibility.ANY, fieldVisibility = Visibility.ANY )
+    public static class LeafClass extends BaseClassToMixIn {}
 
     @JsonAutoDetect( setterVisibility = Visibility.NONE, fieldVisibility = Visibility.NONE )
     public interface MixIn {}
@@ -61,17 +73,17 @@ public final class MixinDeserForClassTester extends AbstractTester {
     /**********************************************************
      */
 
-    public void testClassMixInsTopLevel(ObjectReaderTester<LeafClass> reader) {
-        LeafClass result = reader.read( "{\"a\":\"value\"}" );
+    public void testClassMixInsTopLevel( ObjectReaderTester<LeafClassToMixIn> reader ) {
+        LeafClassToMixIn result = reader.read( "{\"a\":\"value\"}" );
         assertEquals( "value", result.a );
     }
 
     /* and then a test for mid-level mixin; should have no effect
      * when deserializing leaf (but will if deserializing base class)
      */
-    public void testClassMixInsMidLevel(ObjectReaderTester<BaseClass> readerBase, ObjectReaderTester<LeafClass> readerLeaf)  {
+    public void testClassMixInsMidLevel( ObjectReaderTester<BaseClassToMixIn> readerBase, ObjectReaderTester<LeafClass> readerLeaf ) {
         {
-            BaseClass result = readerBase.read( "{\"a\":\"value\"}" );
+            BaseClassToMixIn result = readerBase.read( "{\"a\":\"value\"}" );
             assertEquals( "value", result.a );
         }
 
@@ -85,7 +97,7 @@ public final class MixinDeserForClassTester extends AbstractTester {
     /* Also: when mix-in attached to Object.class, will work, if
      * visible (similar to mid-level, basically)
      */
-    public void testClassMixInsForObjectClass(ObjectReaderTester<BaseClass> readerBase, ObjectReaderTester<LeafClass> readerLeaf){
+    public void testClassMixInsForObjectClass( ObjectReaderTester<BaseClass> readerBase, ObjectReaderTester<LeafClass> readerLeaf ) {
         // will be seen for BaseClass
         {
             BaseClass result = readerBase.read( "{\"a\":\"\"}" );
@@ -94,7 +106,7 @@ public final class MixinDeserForClassTester extends AbstractTester {
 
         // but LeafClass still overrides
         {
-            LeafClass result = readerLeaf.read( "{\"a\":\"\"}");
+            LeafClass result = readerLeaf.read( "{\"a\":\"\"}" );
             assertEquals( "XXX", result.a );
         }
     }

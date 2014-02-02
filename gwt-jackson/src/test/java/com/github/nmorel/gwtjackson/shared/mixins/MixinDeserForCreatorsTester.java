@@ -18,7 +18,6 @@ package com.github.nmorel.gwtjackson.shared.mixins;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nmorel.gwtjackson.shared.AbstractTester;
 import com.github.nmorel.gwtjackson.shared.ObjectReaderTester;
 
@@ -86,7 +85,7 @@ public final class MixinDeserForCreatorsTester extends AbstractTester {
 
         private StringWrapper( String s, boolean foo ) { _value = s; }
 
-        @SuppressWarnings( "unused" )
+        @SuppressWarnings("unused")
         private static StringWrapper create( String str ) {
             return new StringWrapper( str, false );
         }
@@ -110,8 +109,6 @@ public final class MixinDeserForCreatorsTester extends AbstractTester {
      */
 
     public void testForConstructor( ObjectReaderTester<BaseClassWithPrivateCtor> reader ) {
-        ObjectMapper m = new ObjectMapper();
-        m.addMixInAnnotations( BaseClassWithPrivateCtor.class, MixInForPrivate.class );
         BaseClassWithPrivateCtor result = reader.read( "\"?\"" );
         assertEquals( "?...", result._a );
     }

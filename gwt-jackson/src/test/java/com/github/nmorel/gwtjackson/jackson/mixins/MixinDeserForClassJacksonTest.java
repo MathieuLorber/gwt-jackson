@@ -19,7 +19,9 @@ package com.github.nmorel.gwtjackson.jackson.mixins;
 import com.github.nmorel.gwtjackson.jackson.AbstractJacksonTest;
 import com.github.nmorel.gwtjackson.shared.mixins.MixinDeserForClassTester;
 import com.github.nmorel.gwtjackson.shared.mixins.MixinDeserForClassTester.BaseClass;
+import com.github.nmorel.gwtjackson.shared.mixins.MixinDeserForClassTester.BaseClassToMixIn;
 import com.github.nmorel.gwtjackson.shared.mixins.MixinDeserForClassTester.LeafClass;
+import com.github.nmorel.gwtjackson.shared.mixins.MixinDeserForClassTester.LeafClassToMixIn;
 import com.github.nmorel.gwtjackson.shared.mixins.MixinDeserForClassTester.MixIn;
 import org.junit.Test;
 
@@ -30,14 +32,15 @@ public class MixinDeserForClassJacksonTest extends AbstractJacksonTest {
 
     @Test
     public void testClassMixInsTopLevel() {
-        objectMapper.addMixInAnnotations( LeafClass.class, MixIn.class );
-        MixinDeserForClassTester.INSTANCE.testClassMixInsTopLevel( createReader( LeafClass.class ) );
+        objectMapper.addMixInAnnotations( LeafClassToMixIn.class, MixIn.class );
+        MixinDeserForClassTester.INSTANCE.testClassMixInsTopLevel( createReader( LeafClassToMixIn.class ) );
     }
 
     @Test
     public void testClassMixInsMidLevel() {
-        objectMapper.addMixInAnnotations( BaseClass.class, MixIn.class );
-        MixinDeserForClassTester.INSTANCE.testClassMixInsMidLevel( createReader( BaseClass.class ), createReader( LeafClass.class ) );
+        objectMapper.addMixInAnnotations( BaseClassToMixIn.class, MixIn.class );
+        MixinDeserForClassTester.INSTANCE
+                .testClassMixInsMidLevel( createReader( BaseClassToMixIn.class ), createReader( LeafClass.class ) );
     }
 
     @Test
