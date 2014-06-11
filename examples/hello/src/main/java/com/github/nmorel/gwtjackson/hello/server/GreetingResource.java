@@ -4,12 +4,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nmorel.gwtjackson.hello.shared.FieldVerifier;
 import com.github.nmorel.gwtjackson.hello.shared.GreetingRequest;
 import com.github.nmorel.gwtjackson.hello.shared.GreetingResponse;
+import com.github.nmorel.gwtjackson.hello.shared.CodeEnum;
 
 /**
  * @author Nicolas Morel
@@ -38,6 +40,7 @@ public class GreetingResource extends HttpServlet {
         response.setServerInfo( getServletContext().getServerInfo() );
         response.setUserAgent( req.getHeader( "User-Agent" ) );
         response.setGreeting( "Hello, " + greetingRequest.getName() + "!" );
+        response.setCode(CodeEnum.TEST_CODE);
 
         // Serialize the response into the servlet output
         mapper.writeValue( resp.getOutputStream(), response );

@@ -1,3 +1,9 @@
+.project
+.settings
+.classpath
+
+target
+
 .idea/*
 !.idea/codeStyleSettings.xml
 !.idea/copyright/*
