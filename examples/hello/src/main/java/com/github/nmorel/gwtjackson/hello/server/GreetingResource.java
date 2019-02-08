@@ -24,25 +24,25 @@ public class GreetingResource extends HttpServlet {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    protected void doPost( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         // Deserialize the request
-        GreetingRequest greetingRequest = mapper.readValue( req.getInputStream(), GreetingRequest.class );
+        GreetingRequest greetingRequest = mapper.readValue(req.getInputStream(), GreetingRequest.class);
 
         // Verify that the input is valid.
-        if ( !FieldVerifier.isValidName( greetingRequest.getName() ) ) {
+        if (!FieldVerifier.isValidName(greetingRequest.getName())) {
             // If the input is not valid, throw an IllegalArgumentException back to
             // the client.
-            throw new IllegalArgumentException( "Name must be at least 4 characters long" );
+            throw new IllegalArgumentException("Name must be at least 4 characters long");
         }
 
         GreetingResponse response = new GreetingResponse();
-        response.setServerInfo( getServletContext().getServerInfo() );
-        response.setUserAgent( req.getHeader( "User-Agent" ) );
-        response.setGreeting( "Hello, " + greetingRequest.getName() + "!" );
+        response.setServerInfo(getServletContext().getServerInfo());
+        response.setUserAgent(req.getHeader("User-Agent"));
+        response.setGreeting("Hello, " + greetingRequest.getName() + "!");
         response.setCode(CodeEnum.TEST_CODE);
 
         // Serialize the response into the servlet output
-        mapper.writeValue( resp.getOutputStream(), response );
+        mapper.writeValue(resp.getOutputStream(), response);
     }
 }
